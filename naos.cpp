@@ -20,8 +20,15 @@ int usage(){
 
 
 
+struct alignment{
+  BString ras, qas;
+  int     ref_start_pos;
 
-void countKmerFrequencies (
+};
+
+vector<alignment> alignments;
+
+void parse_sam (
     const char* FASTAFileName,
     const char* SAMFileName,
     uint KmerSize,
@@ -77,7 +84,6 @@ void countKmerFrequencies (
       //exit(2);
     }
 
-
     // get aligned sequence at here
     const CIGAROPS cops     = parseCIGARString(record.cigar);
 
@@ -86,8 +92,12 @@ void countKmerFrequencies (
     const int refStartPos   = record.pos;
     const int queryStartPos = 0; // generateAlignmentSequencesFromCIGARAndSeqs() will manege first Softclip / Hardclip
     BString ras, qas;
-    //generateAlignmentSequencesFromCIGARAndSeqs(refBS, queryBS, cops, refStartPos, queryStartPos, ras, qas);
-
+    generateAlignmentSequencesFromCIGARAndSeqs(refBS, queryBS, cops, refStartPos, queryStartPos, ras, qas);
+    alignment al;
+    al.ras = ras;
+    al.qas = qas;
+    al.ref_start_pos = refStartPos;
+    alignments.push_back(al);
     // if record flag has revcomp flag, modify aligned reference sequence and read sequence.
     if((record.flag & 16) != 16){
       revCompBString(ras);
@@ -113,41 +123,42 @@ int main(int argc, char *argv[]){
     { "binary"    , required_argument , NULL , 'b' } ,
     { 0           , 0                 , 0    , 0  }  ,
   };
-
   /// PARAMETERS ///
 
-  //int kmer_size = 1;
-  //bool output_in_csv = false;
-  //string binary_output_file_name;
+  int kmer_size = 1;
+  bool output_in_csv = false;
+  string binary_output_file_name;
 
   //////////////////
 
-  /*
-     int opt;
-     int longindex;
-     while ((opt = getopt_long(argc, argv, "k:", longopts, &longindex)) != -1) {
-     switch (opt) {
-     case 'b':
-     binary_output_file_name = optarg;
-     break;
-     case 'c':
-     output_in_csv = true;
-     break;
-     case 'k':
-     kmer_size = atoi(optarg);
-     if(kmer_size < 1 || 10 < kmer_size) {
-     error("kmer size must be 1-10");
-     }
-     break;
-     default:
-     MYASSERT_NEVERREACH();
-     }
-     }
-     const int NUM_REQUIRED_ARGUMENTS = 2;
-     if(optind + NUM_REQUIRED_ARGUMENTS != argc) {
-     printUsageAndExit();
-     }
-     */
+  int opt;
+  int longindex;
+  while ((opt = getopt_long(argc, argv, "k:", longopts, &longindex)) != -1) {
+    switch (opt) {
+      case 'b':
+        binary_output_file_name = optarg;
+        break;
+      case 'c':
+        output_in_csv = true;
+        break;
+      case 'k':
+        kmer_size = atoi(optarg);
+        if(kmer_size < 1 || 10 < kmer_size) {
+          //error("kmer size must be 1-10");
+        }
+        break;
+      default:
+        MYASSERT_NEVERREACH();
+    }
+  }
+  const int NUM_REQUIRED_ARGUMENTS = 2;
+  if(optind + NUM_REQUIRED_ARGUMENTS != argc) {
+    //printUsageAndExit();
+  }
+
+  const char* fasta_file_name = argv[optind + 0];
+  const char* sam_file_name   = argv[optind + 1];
+  parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
   return 0;
 }
 
