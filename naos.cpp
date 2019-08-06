@@ -13,9 +13,9 @@
 using namespace std;
 
 
-int usage(){
-  cerr << "NAOS " << endl;
-  return 0;
+void printUsageAndExit(){
+  cerr << "NAOS ref.fa align.sam" << endl;
+  exit(2);
 }
 
 
@@ -27,6 +27,12 @@ struct alignment{
 };
 
 vector<alignment> alignments;
+
+void print_alignments(vector<alignment> al){
+  for(auto a:al){
+    fprintf(stdout, "%d\n%s\n%s\n\n", a.ref_start_pos, BString2String(a.ras).c_str(), BString2String(a.qas).c_str());
+  }
+}
 
 void parse_sam (
     const char* FASTAFileName,
@@ -153,12 +159,13 @@ int main(int argc, char *argv[]){
   }
   const int NUM_REQUIRED_ARGUMENTS = 2;
   if(optind + NUM_REQUIRED_ARGUMENTS != argc) {
-    //printUsageAndExit();
+    printUsageAndExit();
   }
 
   const char* fasta_file_name = argv[optind + 0];
   const char* sam_file_name   = argv[optind + 1];
   parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
+  print_alignments(alignments);
   return 0;
 }
 
