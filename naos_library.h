@@ -450,5 +450,29 @@ inline double* lacalNormalization(const int* mtx)
   return retval;
 }
 
+struct alignment{
+  BString ras, qas;
+  int     ref_start_pos;
+
+  public:
+  void print_alignment(){
+    fprintf(stdout, "%d\n%s\n%s\n\n", ref_start_pos, BString2String(ras).c_str(), BString2String(qas).c_str());
+  }
+};
+
+
+struct allele {
+  std::string seq_name;
+  uint        pos;
+  Base        allele;
+  BString     context;
+};
+
+struct candidate {
+  allele ref_str;
+  std::vector<allele> reads;
+};
+
+
 
 #endif // #ifndef _KMER_LIBRARY_HEADER

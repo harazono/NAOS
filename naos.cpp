@@ -18,19 +18,11 @@ void printUsageAndExit(){
   exit(2);
 }
 
-
-
-struct alignment{
-  BString ras, qas;
-  int     ref_start_pos;
-
-};
-
 vector<alignment> alignments;
 
 void print_alignments(vector<alignment> al){
   for(auto a:al){
-    fprintf(stdout, "%d\n%s\n%s\n\n", a.ref_start_pos, BString2String(a.ras).c_str(), BString2String(a.qas).c_str());
+    a.print_alignment();
   }
 }
 
@@ -99,16 +91,16 @@ void parse_sam (
     const int queryStartPos = 0; // generateAlignmentSequencesFromCIGARAndSeqs() will manege first Softclip / Hardclip
     BString ras, qas;
     generateAlignmentSequencesFromCIGARAndSeqs(refBS, queryBS, cops, refStartPos, queryStartPos, ras, qas);
-    alignment al;
-    al.ras = ras;
-    al.qas = qas;
-    al.ref_start_pos = refStartPos;
-    alignments.push_back(al);
     // if record flag has revcomp flag, modify aligned reference sequence and read sequence.
     if((record.flag & 16) != 16){
       revCompBString(ras);
       revCompBString(qas);
     }
+    alignment al;
+    al.ras = ras;
+    al.qas = qas;
+    al.ref_start_pos = refStartPos;
+    alignments.push_back(al);
     ++recordCount;
     if(recordCount % 100 == 0) {
       cerr << recordCount << " processed\r" << flush;
@@ -119,6 +111,21 @@ void parse_sam (
     //outputAsBinaryTable(binaryOutputFileName);
   }
 }
+
+
+vector<candidate> candidates;
+
+void detect_snp_candidate(vector<alignment> in_al){
+  candidate tmp_candidate;
+  for(auto al: in_al){
+    
+    candidates.push_back(tmp_candidate);
+  }
+}
+
+
+
+
 
 int main(int argc, char *argv[]){
   GDB_On_SEGV g(argv[0]);
@@ -166,6 +173,7 @@ int main(int argc, char *argv[]){
   const char* sam_file_name   = argv[optind + 1];
   parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
   print_alignments(alignments);
+  detect_snp_candidate(alignments);
   return 0;
 }
 
