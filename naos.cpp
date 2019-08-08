@@ -10,6 +10,10 @@
 #include "naos_library.h"
 #include "cpas_debug.h"
 
+#include "hts.h"
+#include "sam.h"
+
+
 using namespace std;
 
 
@@ -92,10 +96,12 @@ void parse_sam (
     BString ras, qas;
     generateAlignmentSequencesFromCIGARAndSeqs(refBS, queryBS, cops, refStartPos, queryStartPos, ras, qas);
     // if record flag has revcomp flag, modify aligned reference sequence and read sequence.
-    if((record.flag & 16) != 16){
-      revCompBString(ras);
-      revCompBString(qas);
-    }
+
+    /*  if((record.flag & 16) != 16){
+        revCompBString(ras);
+        revCompBString(qas);
+        }
+        */
     alignment al;
     al.ras = ras;
     al.qas = qas;
@@ -110,21 +116,32 @@ void parse_sam (
   if(!binaryOutputFileName.empty()) {
     //outputAsBinaryTable(binaryOutputFileName);
   }
+
+
+  //detecting snp candidates
+  /*
+     map<string, map<int, candidate>> candidates;
+     candidate tmp_candidate;
+     allele    tmp_allele;
+     for(int cnt = 0; cnt < ; cnt++){
+     for(auto al: in_al){
+     if(al.ref_start_pos < cnt || al.ref_start_pos + BString2String(al.ras).size() > cnt){
+
+     }
+     candidates[cnt].reads.push_back(tmp_candidate);
+     }
+     }*/
 }
 
 
-vector<candidate> candidates;
-
-void detect_snp_candidate(vector<alignment> in_al){
-  candidate tmp_candidate;
-  for(auto al: in_al){
-    
-    candidates.push_back(tmp_candidate);
-  }
-}
 
 
+class Input_bam{
+  samFile *in;
 
+
+  public:
+};
 
 
 int main(int argc, char *argv[]){
@@ -173,7 +190,10 @@ int main(int argc, char *argv[]){
   const char* sam_file_name   = argv[optind + 1];
   parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
   print_alignments(alignments);
-  detect_snp_candidate(alignments);
+  //detect_snp_candidate(alignments);
+  
+  
+  Input_bam bam;
+ 
   return 0;
 }
-

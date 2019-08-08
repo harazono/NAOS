@@ -1,5 +1,5 @@
 DEPENDS := .depend.mk
-CXXFLAGS := -g -Wall -O3 -DNDEBUG -std=c++11 -fopenmp -lgomp -I htslib
+CXXFLAGS := -g -Wall -O3 -DNDEBUG -std=c++11 -fopenmp -lgomp -I /home/harazono/local/include/htslib/
 # CXXFLAGS := -g -Wall -O0 -std=c++11 -fopenmp -lgomp
 GTESTFLAGS := -lgtest -lpthread
 SOURCES := naos.cpp

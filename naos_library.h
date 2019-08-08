@@ -451,12 +451,13 @@ inline double* lacalNormalization(const int* mtx)
 }
 
 struct alignment{
-  BString ras, qas;
-  int     ref_start_pos;
+  BString      ras, qas;
+  int          ref_start_pos;
+  SequenceName ref_name;
 
   public:
   void print_alignment(){
-    fprintf(stdout, "%d\n%s\n%s\n\n", ref_start_pos, BString2String(ras).c_str(), BString2String(qas).c_str());
+    fprintf(stdout, "%3d:%s\n%3d:%s\n", ref_start_pos, BString2String(ras).c_str(), ref_start_pos, BString2String(qas).c_str());
   }
 };
 
