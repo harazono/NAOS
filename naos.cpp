@@ -24,7 +24,7 @@ void printUsageAndExit(){
 
 vector<alignment> alignments;
 
-void print_alignments(vector<alignment> al){
+void print_alignments(const vector<alignment>& al){
   for(auto a:al){
     a.print_alignment();
   }
@@ -35,7 +35,7 @@ void parse_sam (
     const char* SAMFileName,
     uint KmerSize,
     const bool outputInCSV,
-    const string binaryOutputFileName ///< empty() if --binary is not given
+    const string& binaryOutputFileName ///< empty() if --binary is not given
     )
 {
   fprintf(stderr, "\n===Parameters===\n");
@@ -85,6 +85,9 @@ void parse_sam (
       continue;
       //exit(2);
     }
+    
+
+
 
     // get aligned sequence at here
     const CIGAROPS cops     = parseCIGARString(record.cigar);

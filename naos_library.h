@@ -456,24 +456,29 @@ struct alignment{
   SequenceName ref_name;
 
   public:
-  void print_alignment(){
-    fprintf(stdout, "%3d:%s\n%3d:%s\n", ref_start_pos, BString2String(ras).c_str(), ref_start_pos, BString2String(qas).c_str());
+  void print_alignment()const{
+    fprintf(stdout, "%3d:%s\n%3d:%s\n\n", ref_start_pos, BString2String(ras).c_str(), ref_start_pos, BString2String(qas).c_str());
   }
 };
 
-
-struct allele {
+/*
+  struct allele {
   std::string seq_name;
   uint        pos;
   Base        allele;
   BString     context;
+};
+*/
+
+struct read_allele {
+  uint read_id;
+  Base allele;
 };
 
 struct candidate {
   allele ref_str;
   std::vector<allele> reads;
 };
-
 
 
 #endif // #ifndef _KMER_LIBRARY_HEADER
