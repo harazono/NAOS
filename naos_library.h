@@ -45,7 +45,7 @@ inline Base char2Base(char inch)
       return GAP_BASE;
     default:
       MYASSERT_NEVERREACH_WD(DUMP(int(inch)));
-      exit(2);
+      exit(3);
   }
 }
 
@@ -461,24 +461,7 @@ struct alignment{
   }
 };
 
-/*
-  struct allele {
-  std::string seq_name;
-  uint        pos;
-  Base        allele;
-  BString     context;
-};
-*/
 
-struct read_allele {
-  uint read_id;
-  Base allele;
-};
-
-struct candidate {
-  allele ref_str;
-  std::vector<allele> reads;
-};
 
 
 #endif // #ifndef _KMER_LIBRARY_HEADER

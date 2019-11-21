@@ -21,14 +21,24 @@ void printUsageAndExit(){
   cerr << "NAOS ref.fa align.sam" << endl;
   exit(2);
 }
-
 vector<alignment> alignments;
 
-void print_alignments(const vector<alignment>& al){
-  for(auto a:al){
-    a.print_alignment();
+class allele{
+  vector<vector<Base>> al;
+  public:
+  void init(Base b){
+    vector<Base> tmp;
+    tmp.push_back(b);
+    al.push_back(tmp);
   }
-}
+};
+vector<allele> snp_candidates;
+
+void push_allele(allele allele_target, SAMRecord sam){
+  //start_pos = sam.pos;
+  //cigar = sam.cigar;
+};
+
 
 void parse_sam (
     const char* FASTAFileName,
@@ -139,13 +149,6 @@ void parse_sam (
 
 
 
-class Input_bam{
-  samFile *in;
-
-
-  public:
-};
-
 
 int main(int argc, char *argv[]){
   GDB_On_SEGV g(argv[0]);
@@ -192,11 +195,5 @@ int main(int argc, char *argv[]){
   const char* fasta_file_name = argv[optind + 0];
   const char* sam_file_name   = argv[optind + 1];
   parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
-  print_alignments(alignments);
-  //detect_snp_candidate(alignments);
-  
-  
-  Input_bam bam;
- 
   return 0;
 }
