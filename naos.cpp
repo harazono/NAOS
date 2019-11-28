@@ -10,7 +10,7 @@
 #include "naos_library.h"
 #include "cpas_debug.h"
 
-#include "hts.h"
+//#include "hts.h"
 #include "sam.h"
 
 
@@ -24,21 +24,26 @@ void printUsageAndExit(){
 vector<alignment> alignments;
 
 class allele{
-  vector<vector<Base>> al;
+  uint         pos;
+  //uint 
+  vector<> each_base;
   public:
   void init(Base b){
-    vector<Base> tmp;
-    tmp.push_back(b);
-    al.push_back(tmp);
+    al.push_back(b);
   }
 };
 vector<allele> snp_candidates;
+//vector</*something*/>     snps;
 
-void push_allele(allele allele_target, SAMRecord sam){
-  //start_pos = sam.pos;
-  //cigar = sam.cigar;
+void push_allele(allele allele_tmp, SAMRecord sam){//push each base in a read to allele_tmp. allele_tmp will be pushed to vector<allele> snp_candidate by other function.
+  start_pos = sam.pos;
+  cigar     = sam.cigar;
+
 };
 
+void detect_snp_candidate(){}
+void snp_call(){}
+void print_vcf(){}
 
 void parse_sam (
     const char* FASTAFileName,
