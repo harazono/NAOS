@@ -23,28 +23,17 @@ void printUsageAndExit(){
 }
 vector<alignment> alignments;
 
-/*
-class allele{
-  uint         pos;
-  //uint 
-  //vector<> each_base;
-  public:
-  void init(Base b){
-    al.push_back(b);
-  }
-};*/
-//vector<allele> snp_candidates;
-//vector</*something*/>     snps;
-/*
-void push_allele(allele allele_tmp, SAMRecord sam){//push each base in a read to allele_tmp. allele_tmp will be pushed to vector<allele> snp_candidate by other function.
-  start_pos = sam.pos;
-  cigar     = sam.cigar;
 
+class allele{
+  uint            ref_pos;
+  vector<read_id> aligned_reads;
+  public:
+  void push_read(read_id tmp){
+    aligned_reads.push_back(tmp);
+  }
 };
-*/
-void detect_snp_candidate(){}
-void print_vcf(){}
-void snp_call(){}
+
+vector<allele> snv_candidates;
 
 void parse_sam (
     const char* FASTAFileName,
@@ -101,9 +90,6 @@ void parse_sam (
       continue;
       //exit(2);
     }
-    
-
-
 
     // get aligned sequence at here
     const CIGAROPS cops     = parseCIGARString(record.cigar);
@@ -136,22 +122,12 @@ void parse_sam (
   if(!binaryOutputFileName.empty()) {
     //outputAsBinaryTable(binaryOutputFileName);
   }
-  //detecting snp candidates
-  /*
-     map<string, map<int, candidate>> candidates;
-     candidate tmp_candidate;
-     allele    tmp_allele;
-     for(int cnt = 0; cnt < ; cnt++){
-     for(auto al: in_al){
-     if(al.ref_start_pos < cnt || al.ref_start_pos + BString2String(al.ras).size() > cnt){
-
-     }
-     candidates[cnt].reads.push_back(tmp_candidate);
-     }
-     }*/
 }
 
-
+void call_snv(
+    allele al
+    ){
+}
 
 
 

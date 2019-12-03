@@ -17,6 +17,7 @@ typedef unsigned long ulong;
 typedef unsigned int uint;
 typedef unsigned char Base;
 typedef std::vector<Base> BString; ///< string of bases
+typedef unsigned int read_id;
 
 const uint NUM_CHARS_FOR_BASES = 5;
 
