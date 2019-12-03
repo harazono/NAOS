@@ -457,7 +457,8 @@ struct alignment{
 
   public:
   void print_alignment()const{
-    fprintf(stdout, "%3d:%s\n%3d:%s\n\n", ref_start_pos, BString2String(ras).c_str(), ref_start_pos, BString2String(qas).c_str());
+    //fprintf(stdout, "%3d:%s\n%3d:%s\n\n", ref_start_pos, BString2String(ras).c_str(), ref_start_pos, BString2String(qas).c_str());
+    fprintf(stdout, "%s\n", BString2String(qas).c_str());
   }
 };
 
