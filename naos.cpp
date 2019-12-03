@@ -123,6 +123,16 @@ void parse_sam (
     //outputAsBinaryTable(binaryOutputFileName);
   }
 }
+/*
+void build_snv_candidates(
+    vector<alignment> input_alignments
+    ){
+  for(auto itr = input_alignments.begin(); itr != input_alignments.end(); ++itr){
+    snv_candidates.push_read(itr);
+  }
+}
+*/
+
 
 void call_snv(
     allele al
@@ -176,5 +186,6 @@ int main(int argc, char *argv[]){
   const char* fasta_file_name = argv[optind + 0];
   const char* sam_file_name   = argv[optind + 1];
   parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
+  //build_snv_candidates(alignments);
   return 0;
 }
