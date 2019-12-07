@@ -463,7 +463,10 @@ struct alignment{
   }
 };
 
-
+class allele{
+  Base                       refallele;
+  std::map<alignment, uint> reads;
+};
 
 
 #endif // #ifndef _KMER_LIBRARY_HEADER

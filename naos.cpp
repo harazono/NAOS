@@ -22,16 +22,8 @@ void printUsageAndExit(){
   exit(2);
 }
 vector<alignment> alignments;
+SequenceName      reference_name;
 
-
-class allele{
-  uint            ref_pos;
-  vector<read_id> aligned_reads;
-  public:
-  void push_read(read_id tmp){
-    aligned_reads.push_back(tmp);
-  }
-};
 
 vector<allele> snv_candidates;
 
@@ -78,6 +70,8 @@ void parse_sam (
     }
     if(record.rname == "*") continue;
     if(record.seq == "*") continue;
+    if(record.rname == record.qname) reference_name = record.rname;
+
 
     /*
      * use only primary alignment and supplementary alignment and reverse compliment of them.
@@ -110,9 +104,10 @@ void parse_sam (
     alignment al;
     al.ras = ras;
     al.qas = qas;
+    al.ref_name = record.qname;
     al.ref_start_pos = refStartPos;
     alignments.push_back(al);
-    al.print_alignment();
+    //al.print_alignment();
     ++recordCount;
     if(recordCount % 100 == 0) {
       cerr << recordCount << " processed\r" << flush;
@@ -123,15 +118,26 @@ void parse_sam (
     //outputAsBinaryTable(binaryOutputFileName);
   }
 }
-/*
-void build_snv_candidates(
-    vector<alignment> input_alignments
+
+
+void pushback_snv_candidates(
+    vector<alignment> alignments
     ){
-  for(auto itr = input_alignments.begin(); itr != input_alignments.end(); ++itr){
-    snv_candidates.push_read(itr);
+  alignment ref_al;
+  for(auto itr = alignments.begin(); itr != alignments.end(); itr++){
+    
+    if(itr->ref_name == reference_name) ref_al = *itr;
+  }
+  //ref_al.print_alignment();
+  BString* ref_bstring = &ref_al.ras;
+  for(auto itr = ref_bstring->begin(); itr != ref_bstring->end(); itr++){
+
   }
 }
-*/
+
+
+
+
 
 
 void call_snv(
@@ -186,6 +192,6 @@ int main(int argc, char *argv[]){
   const char* fasta_file_name = argv[optind + 0];
   const char* sam_file_name   = argv[optind + 1];
   parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
-  //build_snv_candidates(alignments);
+  pushback_snv_candidates(alignments);
   return 0;
 }
