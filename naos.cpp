@@ -119,26 +119,27 @@ void parse_sam (
   }
 }
 
+#include <typeinfo>
 
 void pushback_snv_candidates(
     vector<alignment> alignments
     ){
   alignment ref_al;
   for(auto itr = alignments.begin(); itr != alignments.end(); itr++){
-    
     if(itr->ref_name == reference_name) ref_al = *itr;
   }
   //ref_al.print_alignment();
-  BString* ref_bstring = &ref_al.ras;
-  for(auto itr = ref_bstring->begin(); itr != ref_bstring->end(); itr++){
-
+  BString* ref_bstring = &ref_al.qas;
+  string   ref_string  = BString2String(*ref_bstring);
+  for(int ref_pos_itr = 0; ref_pos_itr < ref_string.size(); ref_pos_itr++){
+    allele tmp_allele;
+    tmp_allele.refallele = ref_string[ref_pos_itr];
+    for(auto reads_itr = alignments.begin(); reads_itr != alignments.end(); reads_itr++) {
+      tmp_allele.reads[reads_itr] = reads_itr->ref_start_pos;
+    }
+    snv_candidates.push_back(tmp_allele);
   }
 }
-
-
-
-
-
 
 void call_snv(
     allele al

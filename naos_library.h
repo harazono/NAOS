@@ -452,19 +452,22 @@ inline double* lacalNormalization(const int* mtx)
 }
 
 struct alignment{
+  public:
   BString      ras, qas;
   int          ref_start_pos;
   SequenceName ref_name;
 
-  public:
   void print_alignment()const{
     //fprintf(stdout, "%3d:%s\n%3d:%s\n\n", ref_start_pos, BString2String(ras).c_str(), ref_start_pos, BString2String(qas).c_str());
     fprintf(stdout, "%s\n", BString2String(qas).c_str());
   }
+  bool operator<(const alignment& newone) const {
+    return this->ref_name < newone.ref_name;
+  }
 };
 
-class allele{
-  Base                       refallele;
+struct allele{
+  Base                      refallele;
   std::map<alignment, uint> reads;
 };
 
