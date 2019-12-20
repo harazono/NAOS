@@ -25,7 +25,7 @@ vector<alignment> alignments;
 SequenceName      reference_name;
 
 
-vector<allele*> snv_candidates;
+vector<allele> snv_candidates;
 
 void parse_sam (
     const char* FASTAFileName,
@@ -122,29 +122,42 @@ void parse_sam (
 
 
 void pushback_snv_candidates(
-    vector<alignment> alignments
+    vector<alignment> const &alignments
     ){
   int recordCount = 0;
   alignment ref_al;
+  fprintf(stdout, "enter to push back alignment\n");
   for(auto itr = alignments.begin(); itr != alignments.end(); itr++){
     if(itr->readname == reference_name) ref_al = *itr;
   }
   //ref_al.print_alignment();
+  fprintf(stdout,"qas.size() = %d\n", BString2String(ref_al.ras).size());
   BString* ref_bstring = &ref_al.qas;
   string   ref_string  = BString2String(*ref_bstring);
+  fprintf(stdout, "ref_string.size() = %d\n", ref_string.size());
   for(int ref_pos_itr = 0; ref_pos_itr < ref_string.size(); ref_pos_itr++){
+    // check a position
+    if(){
+      continue;
+    }
+
+    fprintf(stdout, "ref_pos_itr = %d\n", ref_pos_itr);
     allele tmp_allele;
+    if(ref_pos_itr < 10){
+      tmp_allele.print_member();
+    }
     tmp_allele.refallele = ref_string[ref_pos_itr];
     for(auto reads_itr = alignments.begin(); reads_itr != alignments.end(); reads_itr++) {
+      fprintf(stdout,"read_itr->readid = %d\n", reads_itr->readid);
       tmp_allele.reads[reads_itr->readid] = reads_itr->ref_start_pos;
     }
-    snv_candidates.push_back(&tmp_allele);
+    snv_candidates.push_back(tmp_allele);
     ++recordCount;
     if(recordCount % 100 == 0) {
-      cerr << recordCount << " processed\r" << flush;
+      //cerr << recordCount << " processed\r" << flush;
     }
   }
-  cerr << recordCount << " processed\n";
+  //cerr << recordCount << " processed\n";
 }
 
 void call_snv(

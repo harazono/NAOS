@@ -465,8 +465,15 @@ struct alignment{
 };
 
 struct allele{
+  uint                 ref_snv_pos;
   Base                 refallele;
   std::map<uint, uint> reads;
+
+  public:
+  void print_member()const{
+    fprintf(stdout, "ref_snv_pos = %d, Base = %c\n", ref_snv_pos, base2Char(refallele));
+    //print map
+  }
 };
 
 
