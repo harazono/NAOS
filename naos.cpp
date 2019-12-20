@@ -21,18 +21,14 @@ void printUsageAndExit(){
   cerr << "NAOS ref.fa align.sam" << endl;
   exit(2);
 }
-vector<alignment> alignments;
-SequenceName      reference_name;
-
-
-vector<allele> snv_candidates;
 
 void parse_sam (
     const char* FASTAFileName,
     const char* SAMFileName,
     uint KmerSize,
     const bool outputInCSV,
-    const string& binaryOutputFileName ///< empty() if --binary is not given
+    const string& binaryOutputFileName, ///< empty() if --binary is not given
+    string& referenceName
     )
 {
   fprintf(stderr, "\n===Parameters===\n");
@@ -57,6 +53,7 @@ void parse_sam (
   }
 
   SAMRecord record;
+  bool is_reference_name_assigned = false;
   size_t recordCount = 0;
   while(ftp.readNextLine()){
     const char* line = ftp.c_str();
@@ -70,7 +67,16 @@ void parse_sam (
     }
     if(record.rname == "*") continue;
     if(record.seq == "*") continue;
-    if(record.rname == record.qname) reference_name = record.rname;
+    if(record.rname == record.qname) {
+      if(is_reference_name_assigned) {
+        if(record.rname != reference_name) {
+          fprintf(stderr, "ERROR: Multiple reference names!\n");
+          exit(2);
+        }
+      } else {
+        reference_name = record.rname;
+      }
+    }
 
 
     /*
@@ -102,7 +108,6 @@ void parse_sam (
         }
         */
     alignment al;
-    al.ras           = ras;
     al.qas           = qas;
     al.ref_start_pos = refStartPos;
     al.readid        = recordCount;
@@ -122,33 +127,55 @@ void parse_sam (
 
 
 void pushback_snv_candidates(
-    vector<alignment> const &alignments
+    const string& reference_name,
+    vector<alignment> &alignments,
+    vector<allele> &snv_candidate_allele_vec
     ){
-  int recordCount = 0;
-  alignment ref_al;
-  fprintf(stdout, "enter to push back alignment\n");
-  for(auto itr = alignments.begin(); itr != alignments.end(); itr++){
-    if(itr->readname == reference_name) ref_al = *itr;
+  fprintf(stderr, "enter to push back alignment\n");
+  Bstring* reference_aligned_bstring;
+  {
+    bool is_refal_assigned = false;
+    for(auto itr = alignments.begin(); itr != alignments.end(); itr++){
+      if(itr->readname == reference_name) {
+        if(is_refal_assigned) {
+          fprintf(stderr, "ERROR: multiple references!\n");
+          exit(2);
+        }
+        reference_aligned_bstring = itr->qname;//set reference sequence pointer
+        is_refal_assigned = true;
+      }
+    }
+    if(!is_refal_assigned) {
+      fprintf(stderr, "ERROR: Reference sequence '%s' was not found\n", reference_name);
+      exit(2);
+    }
+    //ref_al.print_alignment();
   }
-  //ref_al.print_alignment();
-  fprintf(stdout,"qas.size() = %d\n", BString2String(ref_al.ras).size());
+  for(auto ref_allele_itr = 0; ref_allele_itr < BString2String(reference_aligned_bstring_ptr).size(); ref_allele_itr++) {
+  
+  }
+}
+
+/*
+  fprintf(stderr,"qas.size() = %d\n", BString2String(ref_al.ras).size());
   BString* ref_bstring = &ref_al.qas;
   string   ref_string  = BString2String(*ref_bstring);
-  fprintf(stdout, "ref_string.size() = %d\n", ref_string.size());
+  fprintf(stderr, "ref_string.size() = %d\n", ref_string.size());
+  int recordCount = 0;
   for(int ref_pos_itr = 0; ref_pos_itr < ref_string.size(); ref_pos_itr++){
     // check a position
     if(){
       continue;
     }
 
-    fprintf(stdout, "ref_pos_itr = %d\n", ref_pos_itr);
+    fprintf(stderr, "ref_pos_itr = %d\n", ref_pos_itr);
     allele tmp_allele;
     if(ref_pos_itr < 10){
       tmp_allele.print_member();
     }
     tmp_allele.refallele = ref_string[ref_pos_itr];
     for(auto reads_itr = alignments.begin(); reads_itr != alignments.end(); reads_itr++) {
-      fprintf(stdout,"read_itr->readid = %d\n", reads_itr->readid);
+      fprintf(stderr,"read_itr->readid = %d\n", reads_itr->readid);
       tmp_allele.reads[reads_itr->readid] = reads_itr->ref_start_pos;
     }
     snv_candidates.push_back(tmp_allele);
@@ -156,7 +183,7 @@ void pushback_snv_candidates(
     if(recordCount % 100 == 0) {
       //cerr << recordCount << " processed\r" << flush;
     }
-  }
+  }*/
   //cerr << recordCount << " processed\n";
 }
 
@@ -167,7 +194,9 @@ void call_snv(
 
 
 
+
 int main(int argc, char *argv[]){
+
   GDB_On_SEGV g(argv[0]);
   struct option longopts[] = {
     { "csv"       , no_argument       , NULL , 'c' } ,
@@ -211,7 +240,10 @@ int main(int argc, char *argv[]){
 
   const char* fasta_file_name = argv[optind + 0];
   const char* sam_file_name   = argv[optind + 1];
-  parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name);
-  pushback_snv_candidates(alignments);
+  string name_of_the_only_reference_sequence;
+  parse_sam(fasta_file_name, sam_file_name, kmer_size, output_in_csv, binary_output_file_name, name_of_the_only_reference_sequence);
+  vector<alignment> alignments;
+  vector<allele> snv_candidates;
+  pushback_snv_candidates(reference_name, alignments, snv_candidates);
   return 0;
 }

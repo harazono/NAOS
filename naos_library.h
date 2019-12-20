@@ -453,7 +453,7 @@ inline double* lacalNormalization(const int* mtx)
 
 struct alignment{
   public:
-    BString ras, qas;
+    BString qas;
     int     ref_start_pos;
     uint    readid;
     std::string  readname;
