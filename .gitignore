@@ -2,3 +2,13 @@ head100.sam
 sample.sam
 result.txt
 naos.o
+.cquery_cache/
+Ecoli_K-12_MG1655.fa
+Ecoli.sam
+Ecoli_sorted.bam
+Escherichia_coli_complete_genome.fasta
+Naos
+[[buffergator-tabs]]
+ruby_naos.rb
+small_ecoli.sam
+tags
